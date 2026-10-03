@@ -1,0 +1,132 @@
+# JazzCAD - the TokyoNight palette.
+#
+# The colours are the reference TokyoNight scheme, taken from the same palette the
+# Markdown viewer of this workstation is drawn in, so the two applications look
+# like one system rather than two that happen to sit on the same desktop.
+#
+# HOW A COLOUR IS NAMED HERE: the stylesheet asks for @PrimaryColor and friends.
+# What is written below is an expression the theme engine evaluates - a literal
+# ("#1a1b26"), a reference to another key ("@PrimaryColor"), or one of three
+# functions:
+#   lighten(c, n) / darken(c, n)   n is a RELATIVE percentage, not the Qt one:
+#                                  lighten(c, 20) is 20% lighter, where Qt would
+#                                  want 120.
+#   blend(from, to, amount)        amount is how much of `to` ends up in the
+#                                  result, in percent.
+# Any token the stylesheet asks for and this file does not define falls through to
+# the user's own theme parameters, and then to the built-in defaults, so a colour
+# that is left out here keeps working.
+
+# --- the reference palette --------------------------------------------------
+# Named after TokyoNight Storm, which is the variant of the scheme with the
+# lowered contrast used for long sessions; the two agree on the accents.
+
+# The window, and the surface the model is drawn on.
+PrimaryColor: "#1a1b26"
+# One step back from the window: the bars, the menus, the header of a table.
+PrimaryColorDarken1: "darken(@PrimaryColor, 12)"
+PrimaryColorDarken2: "darken(@PrimaryColor, 20)"
+PrimaryColorDarken3: "darken(@PrimaryColor, 32)"
+PrimaryColorDarken4: "darken(@PrimaryColor, 44)"
+PrimaryColorDarken5: "darken(@PrimaryColor, 58)"
+PrimaryColorDarken6: "darken(@PrimaryColor, 70)"
+
+# One step forward: the raised surfaces, the panels that sit ON the window.
+PrimaryColorLighten1: "lighten(@PrimaryColor, 8)"
+PrimaryColorLighten2: "lighten(@PrimaryColor, 14)"
+PrimaryColorLighten3: "lighten(@PrimaryColor, 20)"
+PrimaryColorLighten4: "lighten(@PrimaryColor, 26)"
+PrimaryColorLighten5: "lighten(@PrimaryColor, 34)"
+PrimaryColorLighten6: "lighten(@PrimaryColor, 42)"
+
+# --- text ------------------------------------------------------------------
+# The main foreground is TokyoNight's text, not pure white: white on this
+# background vibrates, and the model is read for hours at a time.
+TextForegroundColor: "#c0caf5"
+TextDisabledColor: "darken(@TextForegroundColor, 45)"
+TextSelectBackgroundColor: "darken(@AccentColor, 45)"
+# Links stay in the accent rather than the stock blue: the stock blue is close
+# enough to the accent to be mistaken for it.
+TextUrlColor: "#7aa2f7"
+
+# --- the accent -------------------------------------------------------------
+# TokyoNight blue. It carries the selection, the focus ring and the default
+# button; nothing else in the theme is allowed to use it.
+AccentColor: "@ThemeAccentColor1"
+AccentBackgroundColor: "blend(@GeneralBackgroundColor, @AccentColor, 55)"
+AccentHoverColor: "blend(@GeneralBackgroundHoverColor, @AccentColor, 25)"
+
+# --- the surfaces the stylesheet asks for ----------------------------------
+3DViewBackgroundRefColor: "@BackgroundColor"
+
+GeneralBackgroundColor: "@PrimaryColor"
+GeneralAlternateBackgroundColor: "@PrimaryColorDarken2"
+GeneralBackgroundHoverColor: "@PrimaryColorLighten4"
+GeneralDisabledBackgroundColor: "@PrimaryColorDarken3"
+GeneralHeaderBackgroundColor: "@PrimaryColor"
+GeneralGridLinesColor: "@PrimaryColorDarken4"
+
+GeneralBorderColor: "#2f3b54"
+GeneralBorderHoverColor: "#3d4d6e"
+
+MenuBackgroundColor: "@PrimaryColorDarken2"
+ScrollbarBackgroundColor: "@GeneralDisabledBackgroundColor"
+TabbarBackgroundColor: "@PrimaryColorDarken2"
+InActiveTabBackgroundColor: "@PrimaryColorDarken2"
+ActiveTabBackgroundColor: "@3DViewBackgroundRefColor"
+
+DialogBackgroundColor: "@PrimaryColorLighten3"
+GroupboxBackgroundColor: "@PrimaryColorLighten1"
+GroupboxBorderColor: "lighten(@GroupboxBackgroundColor, 12)"
+
+# --- the buttons -----------------------------------------------------------
+ButtonTopBackgroundColor: "@PrimaryColorLighten3"
+ButtonBottomBackgroundColor: "@PrimaryColorLighten2"
+ButtonBackgroundHooverColor: "@PrimaryColorLighten4"
+ButtonBorderColor: "@GeneralBorderColor"
+ButtonBorderHooverColor: "@AccentColor"
+
+CheckedButtonTopBackgroundColor: "darken(@ButtonTopBackgroundColor, 8)"
+CheckedButtonBottomBackgroundColor: "darken(@ButtonBottomBackgroundColor, 8)"
+
+DefaultButtonTopBackgroundColor: "blend(@ButtonTopBackgroundColor, @AccentColor, 22)"
+DefaultButtonBottomBackgroundColor: "blend(@ButtonBottomBackgroundColor, @AccentColor, 22)"
+DefaultButtonBorderColor: "blend(@ButtonBorderColor, @AccentColor, 45)"
+
+ToolButtonCheckedBackground: "@CheckedButtonTopBackgroundColor"
+ToolButtonCheckedBorderColor: "@AccentColor"
+
+CheckBoxBackgroundColor: "@TextEditFieldBackgroundColor"
+CheckBoxBorderColor: "@GeneralBorderColor"
+RadioButtonBackgroundColor: "@CheckBoxBackgroundColor"
+RadioButtonBorderColor: "@GeneralBorderColor"
+
+TextEditFieldBackgroundColor: "@PrimaryColorDarken1"
+
+# --- the shape of the controls --------------------------------------------
+# The stock radius is 3px; the radius here is small on purpose - at 6px the
+# panels of the property editor start to look like buttons, and a CAD window is
+# mostly panels.
+InputFieldBorderRadius: "2px"
+ToolbarButtonsPadding: "3px"
+
+# --- the icons -------------------------------------------------------------
+# Every icon in the stylesheets is drawn in this one colour, which is what makes
+# a toolbar read as one row instead of a bag of coloured stickers. The stock
+# themes pick "white"; the difference is invisible on a light theme and is the
+# whole point on a dark one.
+StylesheetIconsColor: "#a9b1d6"
+IconsLocationFolderName: "images_dark-light"
+
+# --- the sketch ------------------------------------------------------------
+# The solver speaks through colour, so these are the one place where a palette
+# colour would cost information: the conflicts, the redundancies and the failures
+# are told apart by hue here, and they are the palette's own red / orange / yellow.
+SketcherConflictingConstraintsColor: "#f7768e"
+SketcherMalformedConstraintsColor: "#f7768e"
+SketcherSolverFailedColor: "#ff9090"
+SketcherRedundantConstraintsColor: "#ff9e64"
+SketcherPartiallyRedundantConstraintsColor: "#7dcfff"
+SketcherFullyConstrainedColor: "#9ece6a"
+SketcherUnderConstrainedColor: "#a9b1d6"
+SketcherEmptySketchColor: "#c0caf5"

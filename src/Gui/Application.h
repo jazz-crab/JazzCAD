@@ -26,6 +26,7 @@
 #include <QPixmap>
 #include <map>
 #include <string>
+#include <string_view>
 
 #include <App/Application.h>
 
@@ -38,6 +39,30 @@ class NavlibInterface;
 namespace Gui
 {
 GuiExport void requireMainThread(const char* api);
+
+/** JAZZCAD: the name of the one theme, and of the parameter file that carries its colours.
+ *
+ * The preference group spells a theme as the base name of the file that
+ * defines it (`parameters/<name>.yaml`), so this name is used both as the
+ * fallback when the preference has never been written and as the pack the
+ * preferences window selects for a person who has not chosen. It lives in the
+ * header rather than in Application.cpp because the preferences dialog is a
+ * different translation unit and has to give the same answer.
+ */
+inline constexpr std::string_view JazzCadTheme = "JazzCAD TokyoNight";
+
+/** JAZZCAD: the language the program speaks until a person chooses another.
+ *
+ * A preference that was never written gives the locale of the machine, which is
+ * not a language a person chose and is often not one they read: an English
+ * Windows on a Russian account opens a Russian interface over English drawings.
+ * The catalogue of this language is the one the translations were made for, so
+ * a string that has no translation reads as itself rather than as nothing.
+ *
+ * A language that WAS chosen is used as given. That is what keeps the language
+ * switch in Preferences working, including for Russian.
+ */
+inline constexpr std::string_view JazzCadDefaultLanguage = "en";
 
 class ApplicationPy;
 class BaseView;

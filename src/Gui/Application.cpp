@@ -447,7 +447,11 @@ void Application::initStyleParameterManager()
             return path;
         }
 
-        return std::format("qss:parameters/{}.yaml", hMainWindowGrp->GetASCII("Theme", "Classic"));
+        // JAZZCAD: THERE IS ONE THEME. The parameter is still read - a document or a
+        // preference pack may name another one, and refusing it would break the
+        // file rather than the theme - but a person who has never chosen gets
+        // TokyoNight, not whatever the stock default happens to be called.
+        return std::format("qss:parameters/{}.yaml", hMainWindowGrp->GetASCII("Theme", JazzCadTheme));
     };
 
     auto themeParametersSource = new StyleParameters::YamlParameterSource(
@@ -536,9 +540,28 @@ Application::Application(bool GUIenabled)
         // install the last active language
         ParameterGrp::handle hPGrp = App::GetApplication().GetUserParameter().GetGroup("BaseApp");
         hPGrp = hPGrp->GetGroup("Preferences")->GetGroup("General");
-        QString lang = QLocale::languageToString(QLocale().language());
-        Translator::instance()->activateLanguage(
-            hPGrp->GetASCII("Language", (const char*)lang.toLatin1()).c_str());
+        // JAZZCAD: ENGLISH UNLESS THE PREFERENCE SAYS OTHERWISE.
+        //
+        // The stock default is the locale of the machine, which puts a person
+        // who reads Russian and works on English models through a Russian UI -
+        // and, worse, a person with an English Windows through a Russian UI,
+        // because the answers of the translator were resolved against the
+        // locale rather than against the language that was asked for.
+        //
+        // A language the user did not choose is replaced by English; a language
+        // they DID choose is left alone, which is what keeps the Russian
+        // switch in Preferences working and is the reason this reads the
+        // parameter instead of forcing the argument.
+        const std::string lang = [&hPGrp] {
+            const std::string stored = hPGrp->GetASCII("Language", "");
+            // A locale name is not a language name: "ru_RU" installs no catalogue
+            // and leaves every string bare. Only the part before the separator is
+            // a language, and only that is looked up.
+            const auto cut = stored.find_first_of("_-");
+            const std::string language = cut == std::string::npos ? stored : stored.substr(0, cut);
+            return language.empty() ? std::string(JazzCadDefaultLanguage) : language;
+        }();
+        Translator::instance()->activateLanguage(lang);
         GetWidgetFactorySupplier();
 
         // Coin3d disables VBO support for some (typically very old) drivers and hardware.

@@ -7,6 +7,10 @@ SET(Stylesheets_Files
 SET(Parameters_Files
     "parameters/FreeCAD Dark.yaml"
     "parameters/FreeCAD Light.yaml"
+    # JAZZCAD: the one theme of this build. Listed first because the preferences
+    # window offers the packs in the order the manager finds them, and the theme
+    # that ships should not be the last thing in the list.
+    "parameters/JazzCAD TokyoNight.yaml"
 )
 
 SET(Overlay_Stylesheets_Files

@@ -460,11 +460,24 @@ void DlgSettingsGeneral::loadThemes()
     QFileInfo fi(currentStyleSheet);
     currentStyleSheet = fi.baseName();
     QString themeClassic = QStringLiteral("classic");  // handle the upcoming name change
+    // JAZZCAD: THE THEME OF A PERSON WHO HAS NOT CHOSEN ONE.
+    //
+    // The stock fallback picks whatever pack is named "classic", so a build
+    // whose only theme pack carries a different name lands on an empty box with
+    // nothing selected. Naming the file that ships here makes the choice
+    // explicit and, unlike disabling the combobox, keeps a theme pack that the
+    // person installed themselves working - the "more themes" path still scans
+    // for packs and still offers what it finds.
+    const QString jazzCadTheme = QString::fromStdString(std::string(Gui::JazzCadTheme));
     QString similarTheme;
     QString packName;
+    bool jazzCadFound = false;
     for (const auto& pack : packs) {
         if (pack.second.metadata().type() == "Theme") {
             packName = QString::fromStdString(pack.first);
+            if (packName.contains(jazzCadTheme, Qt::CaseInsensitive)) {
+                jazzCadFound = true;
+            }
             if (packName.contains(themeClassic, Qt::CaseInsensitive)) {
                 themeClassic = QString::fromStdString(pack.first);
             }
@@ -479,6 +492,10 @@ void DlgSettingsGeneral::loadThemes()
         if (!currentStyleSheet.isEmpty() && !similarTheme.isEmpty()) {  // a user upgrading from
                                                                         // 0.21 or earlier
             hGrp->SetASCII("Theme", similarTheme.toStdString());
+            currentTheme = QString::fromLatin1(hGrp->GetASCII("Theme", "").c_str());
+        }
+        else if (jazzCadFound) {  // JAZZCAD: the theme that ships with this build
+            hGrp->SetASCII("Theme", jazzCadTheme.toStdString());
             currentTheme = QString::fromLatin1(hGrp->GetASCII("Theme", "").c_str());
         }
         else {  // a brand new user
